@@ -127,6 +127,7 @@
   display: grid;
   gap: 0.8rem;
   align-content: start;
+  min-width: 0;
 }
 
 .admin-panel,
@@ -232,6 +233,7 @@
 .admin-block {
   display: grid;
   gap: 0.7rem;
+  min-width: 0;
 }
 
 .admin-block--split {
@@ -288,6 +290,7 @@
   flex-direction: column;
   gap: 0.6rem;
   align-content: flex-start;
+  min-width: 0;
 }
 
 .admin-specialist-grid {
@@ -562,6 +565,8 @@
 
 .admin-week-planner {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .admin-week-planner--mobile {
@@ -570,12 +575,18 @@
 
 .admin-week-table-wrap {
   width: 100%;
-  overflow: auto;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
 }
 
 .admin-week-table {
   min-width: 1020px;
+  width: max-content;
   border-collapse: separate;
   border-spacing: 0;
   table-layout: fixed;
