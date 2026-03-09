@@ -57,9 +57,6 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
 
   return (
     <main className="admin-page admin-login">
-      <div className="admin-page__glow admin-page__glow--left" />
-      <div className="admin-page__glow admin-page__glow--right" />
-
       <section className="admin-login__card">
         <div className="admin-login__head">
           <img src="/logo_full.png" alt="Mira logo" />
@@ -72,7 +69,7 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
             <input
               name="email"
               type="email"
-              placeholder="admin@mira-salon.com"
+              placeholder="Электронная почта"
               required
             />
           </label>
@@ -82,7 +79,7 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
             <input
               name="password"
               type="password"
-              placeholder="Введите пароль"
+              placeholder="Пароль"
               required
             />
           </label>
