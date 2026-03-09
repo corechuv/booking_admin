@@ -364,6 +364,52 @@ export type AdminLoginEvent = {
   user_role: AuthUserRole | null
 }
 
+export type AdminClientGender = 'male' | 'female'
+
+export type AdminStaffClient = {
+  id: number
+  specialist_id: number
+  specialist_name: string
+  full_name: string
+  email: string | null
+  phone: string | null
+  gender: AdminClientGender | null
+  notes: string | null
+  bookings_count: number
+  last_booking_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type AdminStaffClientBooking = {
+  id: number
+  service_id: number
+  service_title: string
+  starts_at: string
+  ends_at: string
+  status: AdminBookingStatus
+  specialist_name: string | null
+  comment: string | null
+  created_at: string
+}
+
+export type AdminStaffClientDetails = AdminStaffClient & {
+  bookings: AdminStaffClientBooking[]
+}
+
+export type CreateAdminStaffClientPayload = {
+  specialist_id?: number | null
+  full_name: string
+  email?: string | null
+  phone?: string | null
+  gender?: AdminClientGender | null
+  notes?: string | null
+}
+
+export type UpdateAdminStaffClientPayload = Partial<
+  Omit<CreateAdminStaffClientPayload, 'specialist_id'>
+>
+
 export type CreateAdminUserPayload = {
   full_name: string
   email: string
@@ -865,6 +911,57 @@ export const deleteAdminUser = (token: string, userId: number) =>
     `/admin/admin-users/${userId}`,
     {
       method: 'DELETE',
+    },
+    token,
+  )
+
+type FetchAdminClientsParams = {
+  specialist_id?: number
+  search?: string
+  limit?: number
+}
+
+export const fetchAdminClients = (
+  token: string,
+  params: FetchAdminClientsParams = {},
+) => {
+  const query = new URLSearchParams()
+  if (typeof params.specialist_id === 'number') {
+    query.set('specialist_id', String(params.specialist_id))
+  }
+  if (params.search?.trim()) {
+    query.set('search', params.search.trim())
+  }
+  if (typeof params.limit === 'number') {
+    query.set('limit', String(params.limit))
+  }
+  const suffix = query.size > 0 ? `?${query.toString()}` : ''
+  return request<AdminStaffClient[]>(`/admin/clients${suffix}`, {}, token)
+}
+
+export const fetchAdminClientDetails = (token: string, clientId: number) =>
+  request<AdminStaffClientDetails>(`/admin/clients/${clientId}`, {}, token)
+
+export const createAdminClient = (token: string, payload: CreateAdminStaffClientPayload) =>
+  request<AdminStaffClient>(
+    '/admin/clients',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    },
+    token,
+  )
+
+export const updateAdminClient = (
+  token: string,
+  clientId: number,
+  payload: UpdateAdminStaffClientPayload,
+) =>
+  request<AdminStaffClient>(
+    `/admin/clients/${clientId}`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
     },
     token,
   )

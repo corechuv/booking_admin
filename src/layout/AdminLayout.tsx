@@ -23,6 +23,7 @@ const getNavLinks = (role: AuthUser['role']): NavLinkItem[] => {
     return [
       { to: '/', label: 'Обзор', end: true },
       { to: '/bookings/schedule', label: 'Мой календарь' },
+      { to: '/clients', label: 'Мои клиенты' },
       { to: '/specialists/hours', label: 'Мой график' },
       { to: '/specialists/profile', label: 'Мой профиль' },
       { to: '/specialists', label: 'Мои услуги', end: true },
@@ -32,6 +33,7 @@ const getNavLinks = (role: AuthUser['role']): NavLinkItem[] => {
   const links: NavLinkItem[] = [
     { to: '/', label: 'Обзор', end: true },
     { to: '/bookings', label: 'Записи' },
+    { to: '/clients', label: 'Клиенты' },
     { to: '/bookings/schedule', label: 'Календарь' },
     { to: '/categories', label: 'Категории' },
     { to: '/services', label: 'Процедуры' },

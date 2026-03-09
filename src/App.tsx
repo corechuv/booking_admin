@@ -14,6 +14,7 @@ import BookingsPage from './pages/BookingsPage'
 import BookingsSchedulePage from './pages/BookingsSchedulePage'
 import CategoriesPage from './pages/CategoriesPage'
 import CertificatesPage from './pages/CertificatesPage'
+import ClientsPage from './pages/ClientsPage'
 import ContactsPage from './pages/ContactsPage'
 import DashboardPage from './pages/DashboardPage'
 import FaqPage from './pages/FaqPage'
@@ -176,6 +177,7 @@ function App() {
             <>
               <Route index element={<DashboardPage />} />
               <Route path="bookings" element={<BookingsPage />} />
+              <Route path="clients" element={<ClientsPage currentUser={authUser} />} />
               <Route path="categories" element={<CategoriesPage />} />
               <Route path="services" element={<ServicesPage />} />
               <Route path="languages" element={<LanguagesPage />} />
@@ -190,6 +192,10 @@ function App() {
               index
               element={<SpecialistDashboardPage currentUser={authUser} />}
             />
+          ) : null}
+
+          {authUser && authUser.role === 'specialist' ? (
+            <Route path="clients" element={<ClientsPage currentUser={authUser} />} />
           ) : null}
 
           {authUser && (authUser.role === 'specialist' || isAdminLikeRole(authUser.role)) ? (
