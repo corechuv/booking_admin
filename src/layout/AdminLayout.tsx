@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { isAdminLikeRole, type AuthUser } from '../api/backend-api'
 import { CloseIcon, MenuIcon } from '../components/icons'
+import { lockBodyScroll } from '../lib/body-scroll-lock'
 import type { AppTheme } from '../types/theme'
 
 type AdminLayoutProps = {
@@ -62,18 +63,17 @@ function AdminLayout({ authUser, theme, onToggleTheme, onLogout }: AdminLayoutPr
       return
     }
 
-    const previousOverflow = document.body.style.overflow
+    const releaseBodyScrollLock = lockBodyScroll()
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsNavOpen(false)
       }
     }
 
-    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', onKeyDown)
 
     return () => {
-      document.body.style.overflow = previousOverflow
+      releaseBodyScrollLock()
       window.removeEventListener('keydown', onKeyDown)
     }
   }, [isNavOpen])

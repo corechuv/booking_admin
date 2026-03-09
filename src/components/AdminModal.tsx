@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect } from 'react'
+import { lockBodyScroll } from '../lib/body-scroll-lock'
 import { CloseIcon } from './icons'
 
 type AdminModalProps = {
@@ -15,18 +16,17 @@ function AdminModal({ open, title, onClose, children, footer }: AdminModalProps)
       return
     }
 
-    const previousOverflow = document.body.style.overflow
+    const releaseBodyScrollLock = lockBodyScroll()
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onClose()
       }
     }
 
-    document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', onKeyDown)
 
     return () => {
-      document.body.style.overflow = previousOverflow
+      releaseBodyScrollLock()
       window.removeEventListener('keydown', onKeyDown)
     }
   }, [open, onClose])
