@@ -347,6 +347,23 @@ export type AdminUser = {
   updated_at: string
 }
 
+export type AdminLoginEvent = {
+  id: number
+  user_id: number | null
+  attempted_email: string
+  is_success: boolean
+  failure_reason: string | null
+  ip_address: string
+  user_agent: string | null
+  browser: string | null
+  operating_system: string | null
+  device_type: string | null
+  created_at: string
+  user_full_name: string | null
+  user_email: string | null
+  user_role: AuthUserRole | null
+}
+
 export type CreateAdminUserPayload = {
   full_name: string
   email: string
@@ -851,6 +868,30 @@ export const deleteAdminUser = (token: string, userId: number) =>
     },
     token,
   )
+
+type FetchAdminLoginEventsParams = {
+  limit?: number
+  success?: boolean
+  email?: string
+}
+
+export const fetchAdminLoginEvents = (
+  token: string,
+  params: FetchAdminLoginEventsParams = {},
+) => {
+  const query = new URLSearchParams()
+  if (typeof params.limit === 'number') {
+    query.set('limit', String(params.limit))
+  }
+  if (typeof params.success === 'boolean') {
+    query.set('success', String(params.success))
+  }
+  if (params.email?.trim()) {
+    query.set('email', params.email.trim())
+  }
+  const suffix = query.size > 0 ? `?${query.toString()}` : ''
+  return request<AdminLoginEvent[]>(`/admin/login-events${suffix}`, {}, token)
+}
 
 export const createAdminService = (token: string, payload: CreateServicePayload) =>
   request<AdminService>(

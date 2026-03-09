@@ -19,6 +19,7 @@ import DashboardPage from './pages/DashboardPage'
 import FaqPage from './pages/FaqPage'
 import LanguagesPage from './pages/LanguagesPage'
 import LoginPage from './pages/LoginPage'
+import LoginEventsPage from './pages/LoginEventsPage'
 import ServicesPage from './pages/ServicesPage'
 import SpecialistsPage from './pages/SpecialistsPage'
 import SpecialistDashboardPage from './pages/SpecialistDashboardPage'
@@ -220,6 +221,10 @@ function App() {
 
           {authUser && isAdminLikeRole(authUser.role) ? (
             <Route path="admin-users" element={<AdminUsersPage currentUser={authUser} />} />
+          ) : null}
+
+          {authUser && authUser.role === 'super_admin' ? (
+            <Route path="login-events" element={<LoginEventsPage />} />
           ) : null}
 
           <Route
