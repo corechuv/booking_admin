@@ -1492,7 +1492,7 @@
 
 .admin-login__card {
   width: min(430px, 100%);
-  border: 1px solid var(--border-soft);
+  border: 0;
   border-radius: 18px;
   background: var(--panel-bg-1);
   padding: 1.1rem;
@@ -1500,11 +1500,14 @@
   z-index: 2;
   display: grid;
   gap: 0.9rem;
+  margin-inline: auto;
 }
 
 .admin-login__head {
   display: grid;
   gap: 0.4rem;
+  justify-items: center;
+  text-align: center;
 }
 
 .admin-login__head img {
@@ -1579,7 +1582,7 @@
 .admin-login__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 0.8rem;
 }
 

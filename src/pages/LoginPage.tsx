@@ -63,8 +63,7 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
       <section className="admin-login__card">
         <div className="admin-login__head">
           <img src="/logo_full.png" alt="Mira logo" />
-          <h1>Вход в Admin UI</h1>
-          <p>Авторизация администратора.</p>
+          <h1>Панель управления.</h1>
         </div>
 
         <form className="admin-login__form" onSubmit={(event) => void handleSubmit(event)}>
@@ -74,7 +73,6 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
               name="email"
               type="email"
               placeholder="admin@mira-salon.com"
-              defaultValue="admin@mira-salon.com"
               required
             />
           </label>
@@ -85,7 +83,6 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
               name="password"
               type="password"
               placeholder="Введите пароль"
-              defaultValue="ChangeMe123!"
               required
             />
           </label>
@@ -93,7 +90,7 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
           {error ? <p className="admin-login__error">{error}</p> : null}
 
           <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Проверяем...' : 'Войти в админку'}
+            {isSubmitting ? 'Проверяем...' : 'Войти'}
           </button>
         </form>
 
@@ -110,7 +107,6 @@ function LoginPage({ theme, onToggleTheme, onAuthenticated }: LoginPageProps) {
           >
             {theme === 'mira-dark' ? 'Light' : 'Dark'}
           </button>
-          <p>Панель управления салоном Mira.</p>
         </div>
       </section>
     </main>
