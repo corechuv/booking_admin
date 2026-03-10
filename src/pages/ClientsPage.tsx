@@ -437,12 +437,13 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
               <span>Специалист</span>
               <select
                 value={createForm.specialistId}
-                onChange={(event) =>
+                onChange={(event) => {
+                  const value = event.currentTarget.value
                   setCreateForm((current) => ({
                     ...current,
-                    specialistId: event.currentTarget.value,
+                    specialistId: value,
                   }))
-                }
+                }}
               >
                 <option value="">Выберите специалиста</option>
                 {specialists.map((item) => (
@@ -460,21 +461,23 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
               <input
                 type="text"
                 value={createForm.fullName}
-                onChange={(event) =>
-                  setCreateForm((current) => ({ ...current, fullName: event.currentTarget.value }))
-                }
+                onChange={(event) => {
+                  const value = event.currentTarget.value
+                  setCreateForm((current) => ({ ...current, fullName: value }))
+                }}
               />
             </label>
             <label className="admin-form-field">
               <span>Пол</span>
               <select
                 value={createForm.gender}
-                onChange={(event) =>
+                onChange={(event) => {
+                  const value = event.currentTarget.value as GenderFormValue
                   setCreateForm((current) => ({
                     ...current,
-                    gender: event.currentTarget.value as GenderFormValue,
+                    gender: value,
                   }))
-                }
+                }}
               >
                 <option value="">Не указан</option>
                 <option value="male">Мужской</option>
@@ -489,9 +492,10 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
               <input
                 type="email"
                 value={createForm.email}
-                onChange={(event) =>
-                  setCreateForm((current) => ({ ...current, email: event.currentTarget.value }))
-                }
+                onChange={(event) => {
+                  const value = event.currentTarget.value
+                  setCreateForm((current) => ({ ...current, email: value }))
+                }}
               />
             </label>
             <label className="admin-form-field">
@@ -499,9 +503,10 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
               <input
                 type="text"
                 value={createForm.phone}
-                onChange={(event) =>
-                  setCreateForm((current) => ({ ...current, phone: event.currentTarget.value }))
-                }
+                onChange={(event) => {
+                  const value = event.currentTarget.value
+                  setCreateForm((current) => ({ ...current, phone: value }))
+                }}
               />
             </label>
           </div>
@@ -511,9 +516,10 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
             <textarea
               rows={4}
               value={createForm.notes}
-              onChange={(event) =>
-                setCreateForm((current) => ({ ...current, notes: event.currentTarget.value }))
-              }
+              onChange={(event) => {
+                const value = event.currentTarget.value
+                setCreateForm((current) => ({ ...current, notes: value }))
+              }}
             />
           </label>
         </form>
@@ -548,21 +554,23 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
                   <input
                     type="text"
                     value={clientForm.fullName}
-                    onChange={(event) =>
-                      setClientForm((current) => ({ ...current, fullName: event.currentTarget.value }))
-                    }
+                    onChange={(event) => {
+                      const value = event.currentTarget.value
+                      setClientForm((current) => ({ ...current, fullName: value }))
+                    }}
                   />
                 </label>
                 <label className="admin-form-field">
                   <span>Пол</span>
                   <select
                     value={clientForm.gender}
-                    onChange={(event) =>
+                    onChange={(event) => {
+                      const value = event.currentTarget.value as GenderFormValue
                       setClientForm((current) => ({
                         ...current,
-                        gender: event.currentTarget.value as GenderFormValue,
+                        gender: value,
                       }))
-                    }
+                    }}
                   >
                     <option value="">Не указан</option>
                     <option value="male">Мужской</option>
@@ -577,9 +585,10 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
                   <input
                     type="email"
                     value={clientForm.email}
-                    onChange={(event) =>
-                      setClientForm((current) => ({ ...current, email: event.currentTarget.value }))
-                    }
+                    onChange={(event) => {
+                      const value = event.currentTarget.value
+                      setClientForm((current) => ({ ...current, email: value }))
+                    }}
                   />
                 </label>
                 <label className="admin-form-field">
@@ -587,9 +596,10 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
                   <input
                     type="text"
                     value={clientForm.phone}
-                    onChange={(event) =>
-                      setClientForm((current) => ({ ...current, phone: event.currentTarget.value }))
-                    }
+                    onChange={(event) => {
+                      const value = event.currentTarget.value
+                      setClientForm((current) => ({ ...current, phone: value }))
+                    }}
                   />
                 </label>
               </div>
@@ -599,9 +609,10 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
                 <textarea
                   rows={4}
                   value={clientForm.notes}
-                  onChange={(event) =>
-                    setClientForm((current) => ({ ...current, notes: event.currentTarget.value }))
-                  }
+                  onChange={(event) => {
+                    const value = event.currentTarget.value
+                    setClientForm((current) => ({ ...current, notes: value }))
+                  }}
                 />
               </label>
             </form>
