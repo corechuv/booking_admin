@@ -250,6 +250,8 @@ export type AdminFaq = {
   id: number
   question: string
   answer: string
+  question_i18n: AdminI18nMap
+  answer_i18n: AdminI18nMap
   sort_order: number
   is_active: boolean
   created_at: string
@@ -259,6 +261,8 @@ export type AdminFaq = {
 export type CreateFaqPayload = {
   question: string
   answer: string
+  question_i18n?: AdminI18nMap
+  answer_i18n?: AdminI18nMap
   sort_order?: number
   is_active?: boolean
 }

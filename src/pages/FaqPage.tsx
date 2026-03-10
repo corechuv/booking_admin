@@ -1,27 +1,49 @@
 import { type FormEvent, useCallback, useEffect, useState } from 'react'
 import {
+  type AdminI18nMap,
   ApiError,
   createAdminFaq,
   deleteAdminFaq,
   fetchAdminFaqs,
+  fetchAdminLanguages,
   getStoredAdminToken,
   updateAdminFaq,
   type AdminFaq,
+  type AdminLanguage,
 } from '../api/backend-api'
+import AdminI18nFields from '../components/AdminI18nFields'
 import AdminModal from '../components/AdminModal'
 import ConfirmModal from '../components/ConfirmModal'
 
 type FaqFormState = {
   question: string
+  questionI18n: AdminI18nMap
   answer: string
+  answerI18n: AdminI18nMap
   sortOrder: string
+  isActive: boolean
 }
 
 const emptyForm: FaqFormState = {
   question: '',
+  questionI18n: null,
   answer: '',
+  answerI18n: null,
   sortOrder: '0',
+  isActive: true,
 }
+
+const bySortOrderAndId = (a: AdminFaq, b: AdminFaq): number =>
+  a.sort_order - b.sort_order || a.id - b.id
+
+const toDraft = (item: AdminFaq): FaqFormState => ({
+  question: item.question,
+  questionI18n: item.question_i18n,
+  answer: item.answer,
+  answerI18n: item.answer_i18n,
+  sortOrder: String(item.sort_order),
+  isActive: item.is_active,
+})
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof ApiError) {
@@ -32,6 +54,7 @@ const getErrorMessage = (error: unknown): string => {
 
 function FaqPage() {
   const [items, setItems] = useState<AdminFaq[]>([])
+  const [languages, setLanguages] = useState<AdminLanguage[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -54,8 +77,16 @@ function FaqPage() {
     setIsLoading(true)
     setError(null)
     try {
-      const next = await fetchAdminFaqs(token)
-      setItems(next)
+      const [nextFaq, nextLanguages] = await Promise.all([
+        fetchAdminFaqs(token),
+        fetchAdminLanguages(token),
+      ])
+      setItems(nextFaq.sort(bySortOrderAndId))
+      setLanguages(
+        nextLanguages
+          .filter((item) => item.is_active)
+          .sort((a, b) => a.sort_order - b.sort_order || a.code.localeCompare(b.code)),
+      )
     } catch (requestError) {
       setError(getErrorMessage(requestError))
     } finally {
@@ -77,11 +108,7 @@ function FaqPage() {
   const openEditModal = (item: AdminFaq) => {
     setModalMode('edit')
     setEditingId(item.id)
-    setForm({
-      question: item.question,
-      answer: item.answer,
-      sortOrder: String(item.sort_order),
-    })
+    setForm(toDraft(item))
     setIsModalOpen(true)
   }
 
@@ -118,19 +145,26 @@ function FaqPage() {
       if (modalMode === 'create') {
         const created = await createAdminFaq(token, {
           question,
+          question_i18n: form.questionI18n,
           answer,
+          answer_i18n: form.answerI18n,
           sort_order: Number.parseInt(form.sortOrder, 10) || 0,
-          is_active: true,
+          is_active: form.isActive,
         })
-        setItems((current) => [...current, created])
+        setItems((current) => [...current, created].sort(bySortOrderAndId))
       } else {
         const updated = await updateAdminFaq(token, editingId!, {
           question,
+          question_i18n: form.questionI18n,
           answer,
+          answer_i18n: form.answerI18n,
           sort_order: Number.parseInt(form.sortOrder, 10) || 0,
+          is_active: form.isActive,
         })
         setItems((current) =>
-          current.map((row) => (row.id === editingId ? { ...row, ...updated } : row)),
+          current
+            .map((row) => (row.id === editingId ? { ...row, ...updated } : row))
+            .sort(bySortOrderAndId),
         )
       }
       closeModal()
@@ -153,7 +187,9 @@ function FaqPage() {
     try {
       const updated = await updateAdminFaq(token, item.id, { is_active: !item.is_active })
       setItems((current) =>
-        current.map((row) => (row.id === item.id ? { ...row, ...updated } : row)),
+        current
+          .map((row) => (row.id === item.id ? { ...row, ...updated } : row))
+          .sort(bySortOrderAndId),
       )
     } catch (requestError) {
       setError(getErrorMessage(requestError))
@@ -221,6 +257,7 @@ function FaqPage() {
               <tr>
                 <th>Вопрос</th>
                 <th>Ответ</th>
+                <th>Переводы</th>
                 <th>Порядок</th>
                 <th>Статус</th>
                 <th>Действия</th>
@@ -233,6 +270,13 @@ function FaqPage() {
                   <tr key={item.id}>
                     <td>{item.question}</td>
                     <td>{item.answer}</td>
+                    <td>
+                      Q:{' '}
+                      {item.question_i18n ? Object.keys(item.question_i18n).length : 0}
+                      {' / '}
+                      A:{' '}
+                      {item.answer_i18n ? Object.keys(item.answer_i18n).length : 0}
+                    </td>
                     <td>{item.sort_order}</td>
                     <td>{item.is_active ? 'Активен' : 'Скрыт'}</td>
                     <td className="admin-actions-cell">
@@ -316,6 +360,28 @@ function FaqPage() {
             }}
             required
           />
+          {languages.length ? (
+            <>
+              <AdminI18nFields
+                title="Переводы вопроса"
+                languages={languages}
+                value={form.questionI18n}
+                onChange={(value) =>
+                  setForm((current) => ({ ...current, questionI18n: value }))
+                }
+              />
+              <AdminI18nFields
+                title="Переводы ответа"
+                languages={languages}
+                value={form.answerI18n}
+                onChange={(value) =>
+                  setForm((current) => ({ ...current, answerI18n: value }))
+                }
+                multiline
+                rows={3}
+              />
+            </>
+          ) : null}
           <input
             className={modalMode === 'edit' ? 'admin-inline-input' : undefined}
             type="number"
@@ -326,6 +392,17 @@ function FaqPage() {
               setForm((current) => ({ ...current, sortOrder: value }))
             }}
           />
+          <label className="admin-check-field">
+            <input
+              type="checkbox"
+              checked={form.isActive}
+              onChange={(event) => {
+                const checked = event.currentTarget.checked
+                setForm((current) => ({ ...current, isActive: checked }))
+              }}
+            />
+            <span>{form.isActive ? 'Активен' : 'Скрыт'}</span>
+          </label>
           <div className="admin-modal__footer">
             <button className="admin-inline-btn" type="button" onClick={closeModal}>
               Отмена
