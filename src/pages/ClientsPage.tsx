@@ -309,7 +309,6 @@ function ClientsPage({ currentUser }: ClientsPageProps) {
     <section className="admin-block">
       <div className="admin-block__head">
         <h1>{isSpecialist ? 'Мои клиенты' : 'Клиенты'}</h1>
-        <p>Профили клиентов по каждому специалисту отдельно, без пересечений.</p>
       </div>
 
       {error ? <p className="admin-inline-error">{error}</p> : null}
