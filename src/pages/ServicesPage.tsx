@@ -629,7 +629,9 @@ function ServicesPage() {
                 setForm((currentForm) => ({ ...currentForm, isActive: checked }))
               }}
             />
-            <span>{form.isActive ? 'Услуга активна' : 'Услуга скрыта'}</span>
+            <span>
+              {form.isActive ? 'Показывать в каталоге' : 'Скрыто из каталога'}
+            </span>
           </label>
           <div className="admin-modal__footer">
             <button className="admin-inline-btn" type="button" onClick={closeModal}>

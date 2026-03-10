@@ -435,10 +435,10 @@ function CategoriesPage() {
             />
             <span>
               {modalMode === 'create'
-                ? 'Сразу активировать категорию'
+                ? 'Сразу показывать категорию в каталоге'
                 : form.isActive
-                  ? 'Активна'
-                  : 'Скрыта'}
+                  ? 'Показывать категорию в каталоге'
+                  : 'Скрыто из каталога'}
             </span>
           </label>
           <label className="admin-check-field">

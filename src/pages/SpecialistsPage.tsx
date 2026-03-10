@@ -1247,7 +1247,11 @@ function SpecialistsPage({ currentUser }: SpecialistsPageProps) {
                 setCustomServiceForm((current) => ({ ...current, isActive: checked }))
               }}
             />
-            <span>{customServiceForm.isActive ? 'Услуга активна' : 'Скрыта в клиенте'}</span>
+            <span>
+              {customServiceForm.isActive
+                ? 'Показывать в каталоге специалиста'
+                : 'Скрыто из каталога специалиста'}
+            </span>
           </label>
           <button type="submit" disabled={isSavingCustomService || !selectedSpecialistId}>
             {isSavingCustomService
