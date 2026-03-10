@@ -230,6 +230,7 @@ export type AdminCategory = {
   description: string | null
   description_i18n: AdminI18nMap
   is_active: boolean
+  show_empty: boolean
   created_at: string
   updated_at: string
 }
@@ -240,6 +241,7 @@ export type CreateCategoryPayload = {
   description?: string | null
   description_i18n?: AdminI18nMap
   is_active?: boolean
+  show_empty?: boolean
 }
 
 export type UpdateCategoryPayload = Partial<CreateCategoryPayload>

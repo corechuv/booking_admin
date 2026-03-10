@@ -23,6 +23,7 @@ type CategoryFormState = {
   description: string
   descriptionI18n: AdminI18nMap
   isActive: boolean
+  showEmpty: boolean
 }
 
 const emptyCategoryForm: CategoryFormState = {
@@ -31,6 +32,7 @@ const emptyCategoryForm: CategoryFormState = {
   description: '',
   descriptionI18n: null,
   isActive: true,
+  showEmpty: false,
 }
 
 const byCategoryName = (a: AdminCategory, b: AdminCategory): number =>
@@ -50,6 +52,7 @@ const toDraft = (category: AdminCategory): CategoryFormState => ({
   description: category.description ?? '',
   descriptionI18n: category.description_i18n,
   isActive: category.is_active,
+  showEmpty: category.show_empty,
 })
 
 function CategoriesPage() {
@@ -162,6 +165,7 @@ function CategoriesPage() {
           description: form.description.trim() || null,
           description_i18n: form.descriptionI18n,
           is_active: form.isActive,
+          show_empty: form.showEmpty,
         })
         setCategories((currentCategories) =>
           [...currentCategories, created].sort(byCategoryName),
@@ -173,6 +177,7 @@ function CategoriesPage() {
           description: form.description.trim() || null,
           description_i18n: form.descriptionI18n,
           is_active: form.isActive,
+          show_empty: form.showEmpty,
         })
 
         setCategories((currentCategories) =>
@@ -286,6 +291,7 @@ function CategoriesPage() {
                 <th>Описание</th>
                 <th>Услуг</th>
                 <th>Статус</th>
+                <th>Пустая категория</th>
                 <th>Действия</th>
               </tr>
             </thead>
@@ -306,6 +312,7 @@ function CategoriesPage() {
                         {category.is_active ? 'Активна' : 'Скрыта'}
                       </span>
                     </td>
+                    <td>{category.show_empty ? 'Показывать' : 'Скрывать'}</td>
                     <td className="admin-actions-cell">
                       <button
                         className="admin-inline-btn"
@@ -330,12 +337,7 @@ function CategoriesPage() {
                       <button
                         className="admin-inline-btn is-danger"
                         type="button"
-                        disabled={isBusy || linkedServicesCount > 0}
-                        title={
-                          linkedServicesCount > 0
-                            ? 'Сначала удалите или перенесите услуги из этой категории.'
-                            : undefined
-                        }
+                        disabled={isBusy}
                         onClick={() => setDeleteCandidate(category)}
                       >
                         {isDeleting ? 'Удаляем...' : 'Удалить'}
@@ -439,6 +441,17 @@ function CategoriesPage() {
                   : 'Скрыта'}
             </span>
           </label>
+          <label className="admin-check-field">
+            <input
+              type="checkbox"
+              checked={form.showEmpty}
+              onChange={(event) => {
+                const checked = event.currentTarget.checked
+                setForm((currentForm) => ({ ...currentForm, showEmpty: checked }))
+              }}
+            />
+            <span>Показывать в клиенте даже без услуг</span>
+          </label>
           <div className="admin-modal__footer">
             <button className="admin-inline-btn" type="button" onClick={closeModal}>
               Отмена
@@ -465,7 +478,7 @@ function CategoriesPage() {
         title="Удалить категорию?"
         message={
           deleteCandidate
-            ? `Категория «${deleteCandidate.name}» будет удалена без возможности восстановления.`
+            ? `Категория «${deleteCandidate.name}» будет скрыта из клиентского каталога.`
             : ''
         }
         confirmLabel="Удалить"
