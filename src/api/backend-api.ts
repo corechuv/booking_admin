@@ -370,6 +370,20 @@ export type AdminLoginEvent = {
   user_role: AuthUserRole | null
 }
 
+export type AdminVisitEvent = {
+  id: number
+  path: string
+  referrer: string | null
+  language: string | null
+  session_id: string | null
+  ip_address: string
+  user_agent: string | null
+  browser: string | null
+  operating_system: string | null
+  device_type: string | null
+  created_at: string
+}
+
 export type AdminClientGender = 'male' | 'female'
 
 export type AdminStaffClient = {
@@ -994,6 +1008,26 @@ export const fetchAdminLoginEvents = (
   }
   const suffix = query.size > 0 ? `?${query.toString()}` : ''
   return request<AdminLoginEvent[]>(`/admin/login-events${suffix}`, {}, token)
+}
+
+type FetchAdminVisitEventsParams = {
+  limit?: number
+  search?: string
+}
+
+export const fetchAdminVisitEvents = (
+  token: string,
+  params: FetchAdminVisitEventsParams = {},
+) => {
+  const query = new URLSearchParams()
+  if (typeof params.limit === 'number') {
+    query.set('limit', String(params.limit))
+  }
+  if (params.search?.trim()) {
+    query.set('search', params.search.trim())
+  }
+  const suffix = query.size > 0 ? `?${query.toString()}` : ''
+  return request<AdminVisitEvent[]>(`/admin/visit-events${suffix}`, {}, token)
 }
 
 export const createAdminService = (token: string, payload: CreateServicePayload) =>

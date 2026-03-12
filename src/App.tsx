@@ -229,7 +229,7 @@ function App() {
             <Route path="admin-users" element={<AdminUsersPage currentUser={authUser} />} />
           ) : null}
 
-          {authUser && authUser.role === 'super_admin' ? (
+          {authUser && isAdminLikeRole(authUser.role) ? (
             <Route path="login-events" element={<LoginEventsPage />} />
           ) : null}
 

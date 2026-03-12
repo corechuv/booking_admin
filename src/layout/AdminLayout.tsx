@@ -51,7 +51,7 @@ const getNavLinks = (role: AuthUser['role']): NavLinkItem[] => {
     links.push({ to: '/admin-users', label: 'Админы' })
   }
 
-  if (role === 'super_admin') {
+  if (isAdminLikeRole(role)) {
     links.push({ to: '/login-events', label: 'Посещения' })
   }
 
