@@ -373,6 +373,11 @@ export type AdminLoginEvent = {
 export type AdminVisitEvent = {
   id: number
   path: string
+  source: 'client' | 'admin'
+  access_mode: 'anonymous' | 'authenticated'
+  actor_user_id: number | null
+  actor_user_name: string | null
+  actor_user_email: string | null
   referrer: string | null
   language: string | null
   session_id: string | null
@@ -382,6 +387,13 @@ export type AdminVisitEvent = {
   operating_system: string | null
   device_type: string | null
   created_at: string
+}
+
+export type AdminVisitTrackPayload = {
+  path: string
+  referrer?: string | null
+  language?: string | null
+  session_id?: string | null
 }
 
 export type AdminClientGender = 'male' | 'female'
@@ -1013,6 +1025,7 @@ export const fetchAdminLoginEvents = (
 type FetchAdminVisitEventsParams = {
   limit?: number
   search?: string
+  source?: 'all' | 'client' | 'admin'
 }
 
 export const fetchAdminVisitEvents = (
@@ -1026,9 +1039,23 @@ export const fetchAdminVisitEvents = (
   if (params.search?.trim()) {
     query.set('search', params.search.trim())
   }
+  if (params.source && params.source !== 'all') {
+    query.set('source', params.source)
+  }
   const suffix = query.size > 0 ? `?${query.toString()}` : ''
   return request<AdminVisitEvent[]>(`/admin/visit-events${suffix}`, {}, token)
 }
+
+export const trackAdminVisit = (token: string, payload: AdminVisitTrackPayload) =>
+  request<void>(
+    '/admin/visits',
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      keepalive: true,
+    },
+    token,
+  )
 
 export const createAdminService = (token: string, payload: CreateServicePayload) =>
   request<AdminService>(

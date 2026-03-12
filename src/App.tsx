@@ -158,6 +158,7 @@ function App() {
             adminToken && authUser ? (
               <AdminLayout
                 authUser={authUser}
+                adminToken={adminToken}
                 theme={theme}
                 onToggleTheme={toggleTheme}
                 onLogout={handleLogout}

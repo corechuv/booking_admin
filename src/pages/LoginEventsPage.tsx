@@ -20,6 +20,7 @@ const getErrorMessage = (error: unknown): string => {
 
 function LoginEventsPage() {
   const [events, setEvents] = useState<AdminVisitEvent[]>([])
+  const [sourceFilter, setSourceFilter] = useState<'all' | 'client' | 'admin'>('all')
   const [searchFilter, setSearchFilter] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -36,6 +37,7 @@ function LoginEventsPage() {
     try {
       const payload = await fetchAdminVisitEvents(token, {
         limit: 400,
+        source: sourceFilter,
         search: searchFilter.trim() || undefined,
       })
       setEvents(payload)
@@ -44,7 +46,7 @@ function LoginEventsPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [searchFilter])
+  }, [searchFilter, sourceFilter])
 
   useEffect(() => {
     void loadEvents()
@@ -57,10 +59,14 @@ function LoginEventsPage() {
         .map((event) => event.session_id)
         .filter((value): value is string => Boolean(value)),
     ).size
+    const clientEvents = events.filter((event) => event.source === 'client').length
+    const adminEvents = events.filter((event) => event.source === 'admin').length
     return {
       total: events.length,
       uniqueIps,
       uniqueSessions,
+      clientEvents,
+      adminEvents,
     }
   }, [events])
 
@@ -68,7 +74,7 @@ function LoginEventsPage() {
     <section className="admin-block">
       <div className="admin-block__head">
         <h1>Посещения сайта</h1>
-        <p>Анонимная история визитов без логина/регистрации посетителя.</p>
+        <p>Клиентский сайт: анонимно. Админка: только по авторизованному входу.</p>
       </div>
 
       {error ? <p className="admin-inline-error">{error}</p> : null}
@@ -80,6 +86,8 @@ function LoginEventsPage() {
             <span>Всего: {summary.total}</span>
             <span>IP: {summary.uniqueIps}</span>
             <span>Сессий: {summary.uniqueSessions}</span>
+            <span>Клиент: {summary.clientEvents}</span>
+            <span>Админка: {summary.adminEvents}</span>
           </div>
         </div>
         <form
@@ -91,12 +99,25 @@ function LoginEventsPage() {
         >
           <div className="admin-service-form__row">
             <label className="admin-form-field">
+              <span>Источник</span>
+              <select
+                value={sourceFilter}
+                onChange={(event) =>
+                  setSourceFilter(event.currentTarget.value as 'all' | 'client' | 'admin')
+                }
+              >
+                <option value="all">Все</option>
+                <option value="client">Клиент (анонимно)</option>
+                <option value="admin">Админка (по логину)</option>
+              </select>
+            </label>
+            <label className="admin-form-field">
               <span>Поиск</span>
               <input
                 type="text"
                 value={searchFilter}
                 onChange={(event) => setSearchFilter(event.currentTarget.value)}
-                placeholder="IP / страница / браузер / реферер"
+                placeholder="IP / страница / браузер / реферер / пользователь"
               />
             </label>
           </div>
@@ -119,6 +140,9 @@ function LoginEventsPage() {
             <thead>
               <tr>
                 <th>Время</th>
+                <th>Источник</th>
+                <th>Доступ</th>
+                <th>Пользователь</th>
                 <th>Страница</th>
                 <th>IP</th>
                 <th>Браузер</th>
@@ -133,6 +157,9 @@ function LoginEventsPage() {
               {events.map((event) => (
                 <tr key={event.id}>
                   <td>{EVENT_TIME_FORMATTER.format(new Date(event.created_at))}</td>
+                  <td>{event.source === 'admin' ? 'Админка' : 'Клиент'}</td>
+                  <td>{event.access_mode === 'authenticated' ? 'По логину' : 'Анонимно'}</td>
+                  <td>{event.actor_user_email || event.actor_user_name || '—'}</td>
                   <td>{event.path}</td>
                   <td>{event.ip_address}</td>
                   <td>{event.browser || '—'}</td>

@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { isAdminLikeRole, type AuthUser } from '../api/backend-api'
+import AdminVisitTracker from '../components/AdminVisitTracker'
 import { CloseIcon, MenuIcon } from '../components/icons'
 import { lockBodyScroll } from '../lib/body-scroll-lock'
 import type { AppTheme } from '../types/theme'
 
 type AdminLayoutProps = {
   authUser: AuthUser
+  adminToken: string
   theme: AppTheme
   onToggleTheme: () => void
   onLogout: () => void
@@ -58,7 +60,13 @@ const getNavLinks = (role: AuthUser['role']): NavLinkItem[] => {
   return links
 }
 
-function AdminLayout({ authUser, theme, onToggleTheme, onLogout }: AdminLayoutProps) {
+function AdminLayout({
+  authUser,
+  adminToken,
+  theme,
+  onToggleTheme,
+  onLogout,
+}: AdminLayoutProps) {
   const clientAppUrl =
     import.meta.env.VITE_CLIENT_APP_URL?.trim() || 'http://localhost:5173'
   const [isNavOpen, setIsNavOpen] = useState(false)
@@ -86,6 +94,8 @@ function AdminLayout({ authUser, theme, onToggleTheme, onLogout }: AdminLayoutPr
 
   return (
     <main className="admin-page">
+      <AdminVisitTracker token={adminToken} />
+
       <div className="admin-page__shell">
         <header className="admin-topbar">
           <Link
